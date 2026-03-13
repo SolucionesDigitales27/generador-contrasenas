@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Contraseñas Seguras Online — Gratis</title>
+<meta name="description" content="Generá contraseñas seguras al instante. Elegí longitud, mayúsculas, números y símbolos. Sin registro, sin servidores. Tu contraseña nunca sale de tu dispositivo.">
+<meta name="keywords" content="generador de contraseñas, contraseña segura, crear contraseña, password generator, contraseña aleatoria, generador password online">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f5f0;
+    --surface: #ffffff;
+    --surface2: #eeede8;
+    --border: #dddcd7;
+    --text: #1a1a18;
+    --muted: #888880;
+    --accent: #1a472a;
+    --accent-light: #e8f0eb;
+    --accent2: #2d6a4f;
+    --danger: #c0392b;
+    --danger-light: #fdf0ef;
+    --warn: #d4830a;
+    --warn-light: #fef9ed;
+    --success: #1a6b3a;
+    --success-light: #e8f5ec;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .site-header {
+    background: var(--surface);
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  .hero {
+    padding: 48px 24px 0;
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .hero h1 span { color: var(--accent2); }
+  .hero p { color: var(--muted); font-size: 0.95rem; }
+
+  .tool-wrap {
+    max-width: 680px;
+    margin: 32px auto 0;
+    padding: 0 24px 64px;
+  }
+
+  /* PASSWORD OUTPUT */
+  .pwd-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .pwd-display {
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    word-break: break-all;
+    line-height: 1.5;
+    min-height: 48px;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding: 16px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    user-select: all;
+  }
+  .pwd-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    flex: 1;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-secondary.copied { background: var(--success-light); color: var(--success); border-color: var(--success); }
+
+  /* STRENGTH */
+  .strength-wrap { margin-top: 14px; }
+  .strength-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .strength-label { color: var(--muted); }
+  .strength-value { font-weight: 500; }
+  .strength-value.weak { color: var(--danger); }
+  .strength-value.regular { color: var(--warn); }
+  .strength-value.strong { color: var(--success); }
+  .strength-value.very-strong { color: var(--accent); }
+  .strength-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .strength-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.3s, background 0.3s;
+  }
+  .entropy-note { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* OPTIONS */
+  .options-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .option-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .option-row:first-child { padding-top: 0; }
+  .option-label { font-size: 14px; font-weight: 500; }
+  .option-sub { font-size: 11px; color: var(--muted); font-family: var(--font-mono); margin-top: 1px; }
+
+  /* SLIDER */
+  .slider-wrap { display: flex; align-items: center; gap: 10px; }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 140px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .slider-val {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    min-width: 28px;
+    text-align: right;
+  }
+
+  /* TOGGLE */
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+  /* BULK */
+  .bulk-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .bulk-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .bulk-title { font-size: 14px; font-weight: 500; }
+  .bulk-sub { font-size: 12px; color: var(--muted); }
+  .bulk-controls { display: flex; align-items: center; gap: 8px; }
+  .qty-btn {
+    width: 28px; height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s;
+  }
+  .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qty-val { font-family: var(--font-mono); font-size: 14px; font-weight: 500; min-width: 24px; text-align: center; }
+  .bulk-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .bulk-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+  .bulk-copy-btn {
+    font-size: 11px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .bulk-copy-btn:hover { color: var(--accent); }
+
+  /* TIPS */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 500px) { .tips-grid { grid-template-columns: 1fr; } }
+  .tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .tip-card:hover { border-color: var(--accent); }
+  .tip-card.active { border-color: var(--accent); background: var(--accent-light); }
+  .tip-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .tip-desc { font-size: 11px; color: var(--muted); }
+
+  /* SEO */
+  .seo-section {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    border-top: 1px solid var(--border);
+  }
+  .seo-section h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+  .seo-section h3 { font-size: 1rem; font-weight: 500; color: var(--accent2); margin: 20px 0 6px; }
+  .seo-section p { color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-bottom: 8px; }
+  .faq-item { margin-bottom: 14px; }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="logo">generador · contraseñas</span>
+</header>
+
+<section class="hero">
+  <h1>Contraseñas <span>seguras</span><br>al instante</h1>
+  <p>Tu contraseña se genera en tu dispositivo. Nunca pasa por ningún servidor.</p>
+</section>
+
+<div class="tool-wrap">
+
+  <!-- PASSWORD OUTPUT -->
+  <div class="pwd-card">
+    <div class="pwd-display" id="pwd-display">Presioná generar...</div>
+    <div class="pwd-actions">
+      <button class="btn-primary" id="btn-generate">⟳ Generar contraseña</button>
+      <button class="btn-secondary" id="btn-copy">Copiar</button>
+    </div>
+    <div class="strength-wrap" id="strength-wrap" style="display:none">
+      <div class="strength-label-row">
+        <span class="strength-label">Fortaleza</span>
+        <span class="strength-value" id="strength-text"></span>
+      </div>
+      <div class="strength-track">
+        <div class="strength-fill" id="strength-fill"></div>
+      </div>
+      <div class="entropy-note" id="entropy-note"></div>
+    </div>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="options-card">
+    <div class="option-row">
+      <div>
+        <div class="option-label">Longitud</div>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" id="length-slider" min="6" max="64" value="16" step="1">
+        <span class="slider-val" id="length-val">16</span>
+      </div>
+    </div>
+    <div class="option-row">
+      <div>
+        <div class="option-label">Minúsculas</div>
+        <div class="option-sub">a b c d e f...</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="opt-lower" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="option-row">
+      <div>
+        <div class="option-label">Mayúsculas</div>
+        <div class="option-sub">A B C D E F...</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="opt-upper" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="option-row">
+      <div>
+        <div class="option-label">Números</div>
+        <div class="option-sub">0 1 2 3 4 5...</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="opt-num" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="option-row">
+      <div>
+        <div class="option-label">Símbolos</div>
+        <div class="option-sub">! @ # $ % & *</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="opt-sym" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="option-row">
+      <div>
+        <div class="option-label">Sin ambiguos</div>
+        <div class="option-sub">Evita 0 O l 1 I</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="opt-ambig"><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+
+  <!-- PRESETS -->
+  <div class="tips-grid">
+    <div class="tip-card" id="preset-basic" onclick="applyPreset('basic')">
+      <div class="tip-name">Básica</div>
+      <div class="tip-desc">12 chars · sin símbolos · fácil de escribir</div>
+    </div>
+    <div class="tip-card" id="preset-strong" onclick="applyPreset('strong')">
+      <div class="tip-name">Fuerte</div>
+      <div class="tip-desc">20 chars · todo activado</div>
+    </div>
+    <div class="tip-card" id="preset-pin" onclick="applyPreset('pin')">
+      <div class="tip-name">PIN numérico</div>
+      <div class="tip-desc">6 dígitos · solo números</div>
+    </div>
+    <div class="tip-card" id="preset-wifi" onclick="applyPreset('wifi')">
+      <div class="tip-name">WiFi / Router</div>
+      <div class="tip-desc">16 chars · sin ambiguos</div>
+    </div>
+  </div>
+
+  <!-- BULK -->
+  <div class="bulk-section">
+    <div class="bulk-header">
+      <div>
+        <div class="bulk-title">Generar varias a la vez</div>
+        <div class="bulk-sub">Usá la misma configuración de arriba</div>
+      </div>
+      <div class="bulk-controls">
+        <button class="qty-btn" id="qty-minus">−</button>
+        <span class="qty-val" id="qty-val">5</span>
+        <button class="qty-btn" id="qty-plus">+</button>
+        <button class="btn-secondary" id="btn-bulk" style="padding:6px 14px;font-size:13px;">Generar</button>
+      </div>
+    </div>
+    <div class="bulk-list" id="bulk-list"></div>
+  </div>
+
+</div>
+
+<!-- SEO -->
+<section class="seo-section">
+  <h2>Generador de contraseñas seguras — gratis y privado</h2>
+  <p>Generá contraseñas aleatorias de alta seguridad en segundos. Podés personalizar la longitud, incluir o excluir mayúsculas, números y símbolos. Todo ocurre en tu navegador: ningún dato sale de tu dispositivo.</p>
+
+  <h3>¿Qué hace que una contraseña sea segura?</h3>
+  <p>Una contraseña segura combina tres elementos: longitud (a partir de 12 caracteres), variedad (mezcla de letras, números y símbolos) y aleatoriedad (generada por un sistema, no pensada por una persona). Las contraseñas creadas por humanos siguen patrones predecibles que los ataques informáticos explotan fácilmente.</p>
+
+  <h3>¿Qué es la entropía de una contraseña?</h3>
+  <p>La entropía mide en bits qué tan difícil es adivinar una contraseña por fuerza bruta. A mayor entropía, más segura. Una contraseña de 12 caracteres con mayúsculas, minúsculas, números y símbolos tiene una entropía de aproximadamente 79 bits, lo que tomaría miles de años romper con hardware actual.</p>
+
+  <div class="faq-item">
+    <h3>¿Mi contraseña se guarda en algún servidor?</h3>
+    <p>No. El generador usa la función <code>crypto.getRandomValues()</code> del navegador, que es criptográficamente segura. Ninguna contraseña generada se envía, almacena ni registra en ningún lado.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>¿Cada cuánto tiempo debo cambiar mis contraseñas?</h3>
+    <p>La recomendación actual de expertos en seguridad (NIST, 2024) es no cambiar contraseñas periódicamente si son fuertes y únicas, sino cambiarlas solo cuando haya sospechas de filtración. Podés verificar si tu email fue filtrado en haveibeenpwned.com.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>¿Dónde guardo tantas contraseñas distintas?</h3>
+    <p>En un gestor de contraseñas. Las opciones gratuitas más confiables son Bitwarden (código abierto) y KeePass (local, sin nube). Nunca uses la misma contraseña en dos sitios distintos.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>¿Qué es la opción "sin ambiguos"?</h3>
+    <p>Elimina los caracteres que visualmente se confunden: el número 0 y la letra O, el número 1 y las letras l e I. Útil cuando vas a escribir la contraseña a mano o dictarla a alguien.</p>
+  </div>
+</section>
+
+<footer>
+  © 2026 · Herramienta gratuita · Generación 100% local · Sin servidores
+</footer>
+
+<script>
+const CHARS = {
+  lower:  'abcdefghijklmnopqrstuvwxyz',
+  upper:  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  num:    '0123456789',
+  sym:    '!@#$%^&*()_+-=[]{}|;:,.<>?',
+  lowerClean: 'abcdefghjkmnpqrstuvwxyz',
+  upperClean: 'ABCDEFGHJKMNPQRSTUVWXYZ',
+  numClean:   '23456789',
+  symClean:   '!@#$%^&*()_+-=[]{}|;:,.<>?'
+};
+
+let bulkQty = 5;
+
+function getOptions() {
+  return {
+    length: parseInt(document.getElementById('length-slider').value),
+    lower:  document.getElementById('opt-lower').checked,
+    upper:  document.getElementById('opt-upper').checked,
+    num:    document.getElementById('opt-num').checked,
+    sym:    document.getElementById('opt-sym').checked,
+    noAmbig: document.getElementById('opt-ambig').checked
+  };
+}
+
+function buildCharset(opts) {
+  const suffix = opts.noAmbig ? 'Clean' : '';
+  let charset = '';
+  if (opts.lower !== false) charset += CHARS['lower' + suffix];
+  if (opts.upper) charset += CHARS['upper' + suffix];
+  if (opts.num)   charset += CHARS['num' + suffix];
+  if (opts.sym)   charset += CHARS['sym' + suffix];
+  if (!charset)   charset  = CHARS['lower' + suffix]; // fallback: nunca vacío
+  return charset;
+}
+
+function generate(opts) {
+  const charset = buildCharset(opts);
+  if (!charset.length) return '';
+  const arr = new Uint32Array(opts.length);
+  crypto.getRandomValues(arr);
+  let pwd = '';
+  // Guarantee at least one char from each enabled group
+  const groups = [];
+  const suffix = opts.noAmbig ? 'Clean' : '';
+  if (opts.lower !== false) groups.push(CHARS['lower' + suffix]);
+  if (opts.upper) groups.push(CHARS['upper' + suffix]);
+  if (opts.num)   groups.push(CHARS['num' + suffix]);
+  if (opts.sym)   groups.push(CHARS['sym' + suffix]);
+  if (!groups.length) groups.push(CHARS['lower' + suffix]); // fallback
+
+  const guaranteed = [];
+  const gArr = new Uint32Array(groups.length);
+  crypto.getRandomValues(gArr);
+  groups.forEach((g, i) => guaranteed.push(g[gArr[i] % g.length]));
+
+  // Fill the rest
+  const rest = [];
+  for (let i = guaranteed.length; i < opts.length; i++) {
+    rest.push(charset[arr[i] % charset.length]);
+  }
+
+  // Shuffle guaranteed + rest together
+  const combined = [...guaranteed, ...rest];
+  const shuffleArr = new Uint32Array(combined.length);
+  crypto.getRandomValues(shuffleArr);
+  combined.sort((_, __, i = combined.indexOf(_)) => shuffleArr[combined.indexOf(_)] - shuffleArr[combined.indexOf(__)] );
+
+  // Fisher-Yates shuffle
+  for (let i = combined.length - 1; i > 0; i--) {
+    const j = shuffleArr[i] % (i + 1);
+    [combined[i], combined[j]] = [combined[j], combined[i]];
+  }
+  return combined.join('');
+}
+
+function calcEntropy(opts) {
+  const charset = buildCharset(opts);
+  if (!charset.length || opts.length === 0) return 0;
+  return Math.floor(opts.length * Math.log2(charset.length));
+}
+
+function getStrength(entropy) {
+  if (entropy < 28) return { label: 'Muy débil', cls: 'weak', pct: 15, color: '#c0392b' };
+  if (entropy < 50) return { label: 'Débil', cls: 'weak', pct: 30, color: '#c0392b' };
+  if (entropy < 60) return { label: 'Regular', cls: 'regular', pct: 50, color: '#d4830a' };
+  if (entropy < 80) return { label: 'Fuerte', cls: 'strong', pct: 75, color: '#1a6b3a' };
+  return { label: 'Muy fuerte', cls: 'very-strong', pct: 100, color: '#1a472a' };
+}
+
+function generateAndShow() {
+  const opts = getOptions();
+  const charset = buildCharset(opts);
+  if (!charset) {
+    document.getElementById('pwd-display').textContent = 'Activá al menos una opción';
+    return;
+  }
+  const pwd = generate(opts);
+  document.getElementById('pwd-display').textContent = pwd;
+
+  const entropy = calcEntropy(opts);
+  const strength = getStrength(entropy);
+  document.getElementById('strength-wrap').style.display = 'block';
+  const stText = document.getElementById('strength-text');
+  stText.textContent = strength.label;
+  stText.className = 'strength-value ' + strength.cls;
+  const fill = document.getElementById('strength-fill');
+  fill.style.width = strength.pct + '%';
+  fill.style.background = strength.color;
+  document.getElementById('entropy-note').textContent = `${entropy} bits de entropía · ${charset.length} caracteres posibles`;
+
+  // Reset copy button
+  const copyBtn = document.getElementById('btn-copy');
+  copyBtn.textContent = 'Copiar';
+  copyBtn.classList.remove('copied');
+}
+
+document.getElementById('btn-generate').addEventListener('click', generateAndShow);
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  const pwd = document.getElementById('pwd-display').textContent;
+  if (!pwd || pwd === 'Presioná generar...' || pwd === 'Activá al menos una opción') return;
+  navigator.clipboard.writeText(pwd).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+});
+
+document.getElementById('length-slider').addEventListener('input', function() {
+  document.getElementById('length-val').textContent = this.value;
+  generateAndShow();
+});
+
+['opt-lower','opt-upper','opt-num','opt-sym','opt-ambig'].forEach(id => {
+  document.getElementById(id).addEventListener('change', generateAndShow);
+});
+
+function applyPreset(name) {
+  document.querySelectorAll('.tip-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('preset-' + name).classList.add('active');
+  const slider = document.getElementById('length-slider');
+  const upper = document.getElementById('opt-upper');
+  const num = document.getElementById('opt-num');
+  const sym = document.getElementById('opt-sym');
+  const ambig = document.getElementById('opt-ambig');
+  const presets = {
+    basic:  { len: 12, lower: true,  upper: true,  num: true,  sym: false, ambig: false },
+    strong: { len: 20, lower: true,  upper: true,  num: true,  sym: true,  ambig: false },
+    pin:    { len: 6,  lower: false, upper: false, num: true,  sym: false, ambig: false },
+    wifi:   { len: 16, lower: true,  upper: true,  num: true,  sym: false, ambig: true  },
+  };
+  const p = presets[name];
+  slider.value = p.len;
+  document.getElementById('length-val').textContent = p.len;
+  document.getElementById('opt-lower').checked = p.lower;
+  upper.checked = p.upper;
+  num.checked   = p.num;
+  sym.checked   = p.sym;
+  ambig.checked = p.ambig;
+  generateAndShow();
+}
+
+// Bulk
+document.getElementById('qty-minus').addEventListener('click', () => {
+  if (bulkQty > 1) { bulkQty--; document.getElementById('qty-val').textContent = bulkQty; }
+});
+document.getElementById('qty-plus').addEventListener('click', () => {
+  if (bulkQty < 20) { bulkQty++; document.getElementById('qty-val').textContent = bulkQty; }
+});
+document.getElementById('btn-bulk').addEventListener('click', () => {
+  const opts = getOptions();
+  const charset = buildCharset(opts);
+  if (!charset) return;
+  const list = document.getElementById('bulk-list');
+  list.innerHTML = '';
+  for (let i = 0; i < bulkQty; i++) {
+    const pwd = generate(opts);
+    const item = document.createElement('div');
+    item.className = 'bulk-item';
+    item.innerHTML = `<span>${pwd}</span><button class="bulk-copy-btn" onclick="copyBulk(this, '${pwd}')">copiar</button>`;
+    list.appendChild(item);
+  }
+});
+
+function copyBulk(btn, pwd) {
+  navigator.clipboard.writeText(pwd).then(() => {
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = 'copiar', 1500);
+  });
+}
+
+// Auto-generate on load
+generateAndShow();
+</script>
+</body>
+</html>
